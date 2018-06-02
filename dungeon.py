@@ -16,12 +16,7 @@ class Entity(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
 
-
 lev_1,xy,end=mazeGen.generate(25)
-
-print(xy)
-for b in lev_1:
-    print (b)
 
 p=dp.Player(*xy)
 c=dl.gameControl(disp)

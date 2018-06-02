@@ -19,7 +19,6 @@ class Player:
         self.moveD=[(1,0),(0,1),(-1,0),(0,-1)]
 
     def update(self):
-        print (self.x,self.y)
         for event in self.gc.events:
             if event.type == KEYDOWN:
                 self.gc.drawn=False

@@ -57,6 +57,16 @@ def drawMiniMap(gcObj):
 
     px+=2
 
+    if gcObj.p.facingDirection=="n":pTri=[( (670+px*6), (py*6)+6 ),( (670+px*6)+3, (py*6) ),( (670+px*6)+6, (py*6)+6 )]
+    if gcObj.p.facingDirection=="e":pTri=[(670+px*6,py*6),( (670+px*6)+6, (py*6)+3 ),( (670+px*6), (py*6)+6 )]
+    if gcObj.p.facingDirection=="s":pTri=[( (670+px*6), (py*6)),( (670+px*6)+3, (py*6)+6 ),( (670+px*6)+6, (py*6) )]
+    if gcObj.p.facingDirection=="w":pTri=[( (670+px*6)+6, (py*6)),( (670+px*6), (py*6)+3 ),( (670+px*6)+6, (py*6)+6 )]
+
+
+
+    #pygame.draw.polygon(gcObj.screen, (c), tri,width=0)
+
+
     for block in gcObj.currentLevel:
         for cell in block:
             x+=1
@@ -71,11 +81,10 @@ def drawMiniMap(gcObj):
 
         x=1
         y+=1
-
-    pygame.draw.rect(gcObj.screen,((0,255,0)),(670+px*6,py*6,6,6),0)
+    pygame.draw.polygon(gcObj.screen, ((0,255,0)),pTri,0)
+    #pygame.draw.rect(gcObj.screen,((0,255,0)),(670+px*6,py*6,6,6),0)
 
 def drawTile(tile,pos,side,surf,mini):
-    print (tile)
     if mini:
         if tile == 1: c=(25,25,25)
         if tile == 0: c=(150,150,150)
