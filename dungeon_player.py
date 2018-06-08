@@ -17,12 +17,19 @@ class Player:
         self.moveS=[(0,1),(-1,0),(0,-1),(1,0)]
         self.moveA=[(-1,0),(0,-1),(1,0),(0,1)]
         self.moveD=[(1,0),(0,1),(-1,0),(0,-1)]
+    def checkFront(self):
+        xx=self.x+self.moveW[self.facingIndex][0]
+        yy=self.y+self.moveW[self.facingIndex][1]
+        print(self.gc.currentLevel[yy][xx])
+        self.gc.currentLevel[yy][xx]=1
 
     def update(self):
         for event in self.gc.events:
             if event.type == KEYDOWN:
                 self.gc.drawn=False
                 #turning
+                if event.key == K_SPACE:
+                    self.checkFront()
                 if event.key == K_e or event.key == K_q:
                     if event.key == K_e:
                         self.facingIndex+=1

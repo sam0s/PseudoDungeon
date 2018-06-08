@@ -7,6 +7,7 @@ from pygame.locals import *
 #enviro
 floor=pygame.image.load(path.join("images","enviro","floor.png")).convert()
 wall=pygame.image.load(path.join("images","enviro","wall.png")).convert()
+chest=pygame.image.load(path.join("images","enviro","chest.png")).convert()
 enemy1=pygame.image.load(path.join("images","enemy","enemy1.png")).convert()
 
 #hud iamges
@@ -15,6 +16,7 @@ movecontrol=pygame.image.load(path.join("images","hud","control.png")).convert()
 #set colorkeys
 wall.set_colorkey((0,255,0))
 enemy1.set_colorkey((0,255,0))
+chest.set_colorkey((0,255,0))
 
 #handle hud and other control
 class gameControl:
@@ -54,13 +56,14 @@ def drawMiniMap(gcObj):
 
     px=gcObj.p.x
     py=gcObj.p.y
-
     px+=2
 
-    if gcObj.p.facingDirection=="n":pTri=[( (670+px*6), (py*6)+6 ),( (670+px*6)+3, (py*6) ),( (670+px*6)+6, (py*6)+6 )]
-    if gcObj.p.facingDirection=="e":pTri=[(670+px*6,py*6),( (670+px*6)+6, (py*6)+3 ),( (670+px*6), (py*6)+6 )]
-    if gcObj.p.facingDirection=="s":pTri=[( (670+px*6), (py*6)),( (670+px*6)+3, (py*6)+6 ),( (670+px*6)+6, (py*6) )]
-    if gcObj.p.facingDirection=="w":pTri=[( (670+px*6)+6, (py*6)),( (670+px*6), (py*6)+3 ),( (670+px*6)+6, (py*6)+6 )]
+    offset=670
+
+    if gcObj.p.facingDirection=="n":pTri=[( (offset+px*6), (py*6)+6 ),( (offset+px*6)+3, (py*6) ),( (offset+px*6)+6, (py*6)+6 )]
+    if gcObj.p.facingDirection=="e":pTri=[(offset+px*6,py*6),( (offset+px*6)+6, (py*6)+3 ),( (offset+px*6), (py*6)+6 )]
+    if gcObj.p.facingDirection=="s":pTri=[( (offset+px*6), (py*6)),( (offset+px*6)+3, (py*6)+6 ),( (offset+px*6)+6, (py*6) )]
+    if gcObj.p.facingDirection=="w":pTri=[( (offset+px*6)+6, (py*6)),( (offset+px*6), (py*6)+3 ),( (offset+px*6)+6, (py*6)+6 )]
 
 
 
@@ -76,7 +79,7 @@ def drawMiniMap(gcObj):
             if cell == 4:c=(250,0,0)
             if cell == 3:c=(0,0,255)
 
-            pygame.draw.rect(gcObj.screen,(c),(670+x*6,y*6,6,6),0)
+            pygame.draw.rect(gcObj.screen,(c),(offset+x*6,y*6,6,6),0)
 
 
         x=1
@@ -94,7 +97,7 @@ def drawTile(tile,pos,side,surf,mini):
     if tile == 1: tile = floor
     if tile == 0: tile = wall
     if tile == 4: tile = enemy1
-    if tile == 3: tile = floor
+    if tile == 3: tile = chest
 
     x=tile.subsurface(960*pos[0],720*pos[1],960,720)
     xblit=0
