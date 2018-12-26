@@ -3,6 +3,7 @@ from os import path
 from pygame.locals import *
 import random,math,mazeGen
 import dungeon_player as dp
+
 import ui
 
 FONT=ui.LoadFont(24)
@@ -13,9 +14,9 @@ FONT=ui.LoadFont(24)
 floor=pygame.image.load(path.join("images","enviro","floor.png")).convert()
 wall=pygame.image.load(path.join("images","enviro","wall.png")).convert()
 chest=pygame.image.load(path.join("images","enviro","chest.png")).convert()
-enemy1=pygame.image.load(path.join("images","enemy","enemy1.png")).convert()
+enemy1=pygame.image.load(path.join("images","enemy","enemy3.png")).convert()
 floor_down=pygame.image.load(path.join("images","enviro","floor_down.png")).convert()
-floor_up=pygame.image.load(path.join("images","enviro","floor_up.png")).convert()
+floor_up=pygame.image.load(path.join("images","enviro","door.png")).convert()
 
 #hud iamges
 bordersImage=pygame.image.load(path.join("images","hud","borders.png")).convert()
@@ -44,169 +45,12 @@ chest.set_colorkey((255,0,255))
 
 northCone=[[-1,0],[1,0],[0,-1],[-1,-1],[-2,-1],[1,-1],[2,-1],[0,-2],[-1,-2],[-2,-2],[1,-2],[2,-2]
 ]
-eastCone=[[0,-1],[0,1],[1,0],[1,-1],[1,-2],[1,1],[1,2],[2,0],[2,-1],[2,-2],[2,1],[2,2],
+eastCone=[[0,-1],[0,1],[1,0],[1,-1],[1,-2],[1,1],[1,2],[2,0],[2,-1],[2,-2],[2,1],[2,2]
 ]
 southCone=[[-1,0],[1,0],[0,1],[-1,1],[-2,1],[1,1],[2,1],[-2,2],[-1,2],[0,2],[1,2],[2,2]
 ]
 westCone=[[0,-1],[0,1],[-1,0],[-1,1],[-1,2],[-1,-1],[-1,-2],[-2,0],[-2,1],[-2,2],[-2,-1],[-2,-2]
 ]
-
-#handle hud and other control
-class Enemy(object):
-    def __init__(self,x,y,et,gc):
-        self.gc=gc
-        self.x,self.y,self.et=x,y,et
-        self.hp=10
-    def takeHit(self,hit):
-        self.hp-=3
-        print(self.hp)
-        if self.hp<=0:
-            self.gc.enemies.pop(self.gc.enemies.index(self))
-            self.gc.currentLevel[self.y][self.x]=1
-
-    def update(self):
-        pass
-
-class gameControl:
-    def __init__(self,surf,screen):
-        self.surf=surf
-        self.screen=screen
-        self.state="ingame"
-        self.events=[]
-        self.go=True
-        self.drawn=0
-        self.log=["You awaken."]
-        self.controlToggle=False
-
-
-        self.dialog=[]
-        self.lastResult = "None"
-
-        self.hudMoveButtons=[
-        ui.Button(691,315,86,76,"TL",self.screen),
-        ui.Button(778,315,83,76,"UP",self.screen),
-        ui.Button(861,315,87,77,"TR",self.screen),
-        ui.Button(690,392,87,77,"LEFT",self.screen),
-        ui.Button(777,392,84,77,"DOWN",self.screen),
-        ui.Button(860,392,88,77,"RIGHT",self.screen)]
-
-        self.hudButtons=[
-        ui.Button(715,295,82,82,"LK",self.screen),
-        ui.Button(835,295,82,82,"INV",self.screen),
-        ui.Button(715,415,82,82,"ATK",self.screen),
-        ui.Button(835,415,82,82,"CHAR",self.screen),
-        ui.Button(685,270,32,32,"TGM",self.screen)]
-
-    def newMap(self):
-        self.currentLevel,xy,end=mazeGen.generate(25)
-        self.currentView=[]
-        for a in self.currentLevel:
-            self.currentView.append([1,]*len(self.currentLevel[0]))
-        self.p=dp.Player(*xy)
-        self.p.gc=self
-        self.enemies=[]
-        eX=0
-        eY=0
-        for block in self.currentLevel:
-            #print(block)
-            for cell in block:
-
-                if cell == 4:
-                    self.enemies.append(
-                    Enemy(eX,eY,4,self))
-                    print(cell,eX,eY)
-                    #eX+=1
-                eX+=1
-            eX=0
-            eY+=1
-
-    def enemyUpdate(self):
-        for enemy in self.enemies:
-            enemy.update()
-
-    def logUpdate(self,message):
-        self.log.append(message)
-        #self.log=self.log[1:]
-        self.drawn=False
-
-    def buttonUpdate(self,mpos):
-        for b in self.hudButtons:
-            if b.rect.collidepoint(mpos):
-                if b.text == "TGM":
-                    self.controlToggle=(not self.controlToggle)
-                    self.drawn=False
-        if not self.controlToggle:
-            for b in self.hudButtons:
-                if b.rect.collidepoint(mpos):
-                    if b.text == "LK":
-                        self.p.actionLook()
-                    if b.text == "ATK":
-                        self.p.actionAttack()
-        else:
-            for b in self.hudMoveButtons:
-                if b.rect.collidepoint(mpos):
-                    if b.text == "UP":
-                        self.p.actionMove("w")
-                    if b.text == "DOWN":
-                        self.p.actionMove("s")
-                    if b.text == "LEFT":
-                        self.p.actionMove("a")
-                    if b.text == "RIGHT":
-                        self.p.actionMove("d")
-                    if b.text == "TL":
-                        self.p.actionMove("q")
-                    if b.text == "TR":
-                        self.p.actionMove("e")
-
-    def event(self):
-        for e in self.events:
-            if e.type == QUIT:
-                self.go=False
-                pygame.display.quit()
-            if e.type == MOUSEBUTTONUP:
-                if len(self.dialog)==0:
-                    self.buttonUpdate(e.pos)
-                else:
-                    self.dialog[0].buttonCheck(e.pos)
-                    if self.dialog[0].result != "None":
-                        self.lastResult=self.dialog[0].result
-                        self.dialog.pop(0)
-                        self.drawn=False
-
-    def doDialog(self):
-        pass
-        #make it work 
-
-
-    def update(self):
-        if len(self.dialog)>0:
-            self.surf.fill((0,0,0))
-            drawHud(self)
-            drawView((self.p.x,self.p.y),self.currentLevel,self.p.facingDirection,self.surf)
-            #scale player view
-            small=pygame.transform.scale(self.surf, (672,512))
-            self.screen.blit(small,(0,0))
-            self.dialog[0].Update()
-            self.event()
-            pygame.display.flip()
-        else:
-            #Player Update
-            self.p.update()
-            self.event()
-            if self.drawn==0:
-                #draw player view
-                self.surf.fill((0,0,0))
-                drawHud(self)
-                drawView((self.p.x,self.p.y),self.currentLevel,self.p.facingDirection,self.surf)
-
-                #scale player view
-                small=pygame.transform.scale(self.surf, (672,512))
-
-                self.screen.blit(small,(0,0))
-                self.enemyUpdate()
-
-                self.drawn=1
-                pygame.display.flip()
 
 ##### HUDV FUNCTIONS START
 def drawMiniMap(gcObj):
@@ -226,8 +70,6 @@ def drawMiniMap(gcObj):
     if gcObj.p.facingDirection=="w":pTri=[( (offset+px*mmsize)+mmsize, (py*mmsize)),( (offset+px*mmsize), (py*mmsize)+mmsize/2 ),( (offset+px*mmsize)+mmsize, (py*mmsize)+mmsize )]
 
 
-
-    #pygame.draw.polygon(gcObj.screen, (c), tri,width=0)
     px-=2
 
     for a in {"n":northCone,"e":eastCone,"s":southCone,"w":westCone}[gcObj.p.facingDirection]:
@@ -252,18 +94,28 @@ def drawMiniMap(gcObj):
         x=1
         y+=1
     pygame.draw.polygon(gcObj.screen, ((0,255,0)),pTri,0)
-    #pygame.draw.rect(gcObj.screen,((0,255,0)),(mmsize70+px*mmsize,py*mmsize,mmsize,mmsize),0)
 
 def drawLog(gcObj):
     pygame.draw.rect(gcObj.screen,(255,255,255),(0,516,672,204),0)
     bottom=708
+    #2 line messages currently supported
     for msg in reversed(gcObj.log):
-        msgImg=FONT.render("> "+str(msg),1,(255,0,0),(255,255,255))
-        space=msgImg.get_height()+2
-        y=bottom-space
-        gcObj.screen.blit(msgImg,(9,y))
-        bottom-=space
-    #gcObj.screen.blit(FONT.render("> Does this font and style look okay?",1,(255,0,0),(255,255,255)),(9,570))
+        msg1=msg
+        msg2=[]
+        if len(msg)>69:
+            msg1=msg[:69]
+            msg2=[msg[69:]]
+        a=1
+        for mesg in reversed([msg1]+msg2):
+            if a==len([msg1]+msg2):
+                msgImg=FONT.render("> "+str(mesg),1,(255,0,0),(255,255,255))
+            else:
+                msgImg=FONT.render("  "+str(mesg),1,(255,0,0),(255,255,255))
+            a+=1
+            space=msgImg.get_height()+2
+            y=bottom-space
+            gcObj.screen.blit(msgImg,(9,y))
+            bottom-=space
 
 def drawButtons(gcObj):
     #draw either controls for movement or actions
@@ -283,6 +135,7 @@ def drawButtons(gcObj):
 ##### HUDV FUNCTIONS END
 
 def drawTile(tile,pos,side,surf,mini):
+    if tile == 12:tile=1
     if mini:
         if tile == 1: c=(25,25,25)
         if tile == 0: c=(150,150,150)
@@ -391,5 +244,70 @@ def drawHud(gcObj):
     drawLog(gcObj)
     #draw buttons
     drawButtons(gcObj)
+
+    bar(gcObj.screen,(0,200,20),-1,688,532,245,32,gcObj.p.hp,gcObj.p.maxhp)
+    #bar(gcObj.screen,(0,20,200),(0,0,0),688,568,245,32,gcObj.p.hp,gcObj.p.maxhp)
     #draw borders
     gcObj.screen.blit(bordersImage,(0,0))
+
+def bar(surface,color1,color2,x,y,width,height,value,maxvalue):
+    xx=0
+    if color2!=-1:
+        pygame.draw.rect(surface, color2, (x,y,width,height), 0)
+    for hp in range(int(max(min(value / float(maxvalue) * width, width), 0))):
+        pygame.draw.rect(surface, color1, (x+xx,y,1,height), 0)
+        xx+= 1
+
+    surface.blit(FONT.render(str(value)+"/"+str(maxvalue),1,(255,255,255),(0,0,0)),(x+8,y+height/2-10))
+
+def damageCalc(t1,t2):
+    totalDmg=0
+    crit=1
+    missed=True
+    #crit chance
+    if random.randint(0,250) <= t1.stats["crt"]:
+        crit=2
+    #chance to hit based on ATK skill - Enemy AC
+    if random.randint(0,90) <= t1.stats["atk"]:
+        #chance to dodge
+        if random.randint(0,200) <= t2.stats["agi"]:
+            t1.gc.logUpdate(t2.name+" dodged!")
+            return 0
+        else:
+            #dmg = weapon dmg range - enemy def
+
+            totalDmg+=random.randint(1,6)
+
+            totalDmg=totalDmg*crit
+
+            totalDmg-=int(totalDmg*(t2.stats["def"]/100))
+
+            if totalDmg<=1:
+                totalDmg=random.choice([0,1,0,1,1,1])
+
+    else:
+        t1.gc.logUpdate(t1.name+" misses.")
+        return 0
+    if crit>1:
+        t1.gc.logUpdate(t1.name+" critically strikes for "+str(totalDmg)+".")
+        return totalDmg
+    else:
+        t1.gc.logUpdate(t1.name+" strikes for "+str(totalDmg)+".")
+        return totalDmg
+
+
+class animation(object):
+    def __init__(self,anim):
+        self.anim=pygame.image.load(path.join("images","enviro","slash.png"))
+        self.frames=6
+        self.done=False
+    def play(self,surf):
+        surfCopy=surf.copy()
+        frame=0
+        while frame<=self.frames:
+            surf.blit(surfCopy,(0,0))
+            if frame!=self.frames:surf.blit(self.anim.subsurface(247*frame,0,247,205),(200,175))
+            frame+=1
+            pygame.display.flip()
+            pygame.time.delay(25)
+        self.done=True

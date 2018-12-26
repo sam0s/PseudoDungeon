@@ -78,12 +78,12 @@ def generate(size):
     for place in range(4):
         #print (playerPlacementTest[place],place)
         #place player in front of door
-        if(playerPlacementTest[place]):startpos=playerPlacement[place];maze[(playerPlacement[place])[1]][(playerPlacement[place])[0]]=1
+        if(playerPlacementTest[place]):startpos=playerPlacement[place];maze[(playerPlacement[place])[1]][(playerPlacement[place])[0]]=12
 
 
 
 
-    return maze,startpos,endpos
+    return maze
 
 def padMaze(maze,size,padNum=-1):
     #duct-taped function written by sam0s (improved)

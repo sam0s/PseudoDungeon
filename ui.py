@@ -18,7 +18,7 @@ pygame.init()
 def LoadFont(size=11):
     fontpath=path.split(path.realpath("ui.py"))
     fontpath=path.join(fontpath[0],"old.ttf")
-    print (fontpath)
+    #print (fontpath)
     fonst=pygame.font.Font(fontpath,size)
     return fonst
 

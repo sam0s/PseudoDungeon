@@ -4,21 +4,20 @@ import ui
 from pygame.locals import *
 
 lookIndex={3:"a chest",0:"a wall",1:"nothing",4:"a lowly goblin",98:"a way up",99:"a way down"}
+weaponIndex={0:"dagger"}
+key_directionIndex = {K_w:"w",K_s:"s",K_a:"a",K_d:"d",K_e:"e",K_q:"q",}
 
 class Player:
     def __init__(self,x,y):
         self.x=x
         self.y=y
 
-        self.hp=100
         self.gc=None
-
-        #power, defense,
-        #attack = d20 + power
-        #defense = d8% reduction of dmg (roll defense/100 chance to block)
-
-        self.stats={'p':1,'d':1,'a':1}
-
+        self.stats={'atk':65,'agi':25,'def':80,'mag':25,'vit':20,'crt':25}
+        self.maxhp=int(10+(self.stats["vit"]*0.6))
+        self.name="Craig"
+        self.hp=int(self.maxhp)
+        self.weapon=0
 
         self.facingIndex=0
         self.facingDirections=['n','e','s','w']
@@ -27,49 +26,56 @@ class Player:
         self.moveS=[(0,1),(-1,0),(0,-1),(1,0)]
         self.moveA=[(-1,0),(0,-1),(1,0),(0,1)]
         self.moveD=[(1,0),(0,1),(-1,0),(0,-1)]
+        self.combat=False
+        self.turns=1
+
+    def takeHit(self,hit):
+        self.hp-=hit
+        if hit>=1:
+            self.gc.soundMixer.sndPlay("player_hit")
 
     def actionMove(self,direction):
-        self.gc.drawn=0
-        self.moving = 1
-        xprev,yprev=self.x,self.y
-        if direction == "w":
-            self.x+=self.moveW[self.facingIndex][0]
-            self.y+=self.moveW[self.facingIndex][1]
-        if direction == "s":
-            self.x+=self.moveS[self.facingIndex][0]
-            self.y+=self.moveS[self.facingIndex][1]
-        if direction == "a":
-            self.x+=self.moveA[self.facingIndex][0]
-            self.y+=self.moveA[self.facingIndex][1]
-        if direction == "d":
-            self.x+=self.moveD[self.facingIndex][0]
-            self.y+=self.moveD[self.facingIndex][1]
+        if not self.gc.combat:
+            self.gc.drawn=0
+            self.moving = 1
 
-        if self.gc.currentLevel[self.y][self.x]!=1:
-            self.x,self.y=xprev,yprev
+            xprev,yprev=self.x,self.y
+            if direction == "w":
+                self.x+=self.moveW[self.facingIndex][0]
+                self.y+=self.moveW[self.facingIndex][1]
+            if direction == "s":
+                self.x+=self.moveS[self.facingIndex][0]
+                self.y+=self.moveS[self.facingIndex][1]
+            if direction == "a":
+                self.x+=self.moveA[self.facingIndex][0]
+                self.y+=self.moveA[self.facingIndex][1]
+            if direction == "d":
+                self.x+=self.moveD[self.facingIndex][0]
+                self.y+=self.moveD[self.facingIndex][1]
 
-        #check turning
-        if direction == "q":
-            self.facingIndex-=1
-        if direction == "e":
-            self.facingIndex+=1
+            if self.gc.currentLevel[self.y][self.x]!=1:
+                self.x,self.y=xprev,yprev
 
-        if self.facingIndex>3:self.facingIndex=0
-        if self.facingIndex<0:self.facingIndex=3
-        self.facingDirection=self.facingDirections[self.facingIndex]
+            self.gc.currentLevel[yprev][xprev]=1
+            self.gc.currentLevel[self.y][self.x]=12
+
+
+            #check turning
+            if direction == "q":
+                self.facingIndex-=1
+            if direction == "e":
+                self.facingIndex+=1
+
+            if self.facingIndex>3:self.facingIndex=0
+            if self.facingIndex<0:self.facingIndex=3
+            self.facingDirection=self.facingDirections[self.facingIndex]
 
     def actionAttack(self):
-        x1=self.x+self.moveW[self.facingIndex][0]
-        y1=self.y+self.moveW[self.facingIndex][1]
-        front=self.gc.currentLevel[y1][x1]
-        #hit scan
-        for e in self.gc.enemies:
-            if e.x==x1:
-                if e.y==y1:
-                    e.takeHit(21)
-                    break
-
-        self.gc.logUpdate(str(front))
+        if self.gc.combat:
+            self.target.takeHit(dl.damageCalc(self,self.target))
+            self.turns-=1
+        self.gc.drawn=0
+        pygame.time.delay(200)
 
     def actionLook(self):
         x1=self.x+self.moveW[self.facingIndex][0]
@@ -77,38 +83,40 @@ class Player:
         front=self.gc.currentLevel[y1][x1]
 
         if front == 3:
-            self.gc.dialog.append(ui.dialog(32,32,("Open the chest before you?",["Open it","Discard it"]),self.gc.screen,0))
-
-        front=lookIndex[front]
-        back=""
-        if self.gc.currentLevel[y1][x1]!=0:
-            x2=x1+self.moveW[self.facingIndex][0]
-            y2=y1+self.moveW[self.facingIndex][1]
-            back=self.gc.currentLevel[y2][x2]
-            back=lookIndex[back]
-
-        if len(back)<1:
-            self.gc.logUpdate("You see "+front+".")
+            a=self.gc.doDialog(ui.dialog(32,32,("Open the chest before you?",["Open it","Discard it"]),self.gc.screen,0))
+            if a == "Open it":
+                front=lookIndex[front]
+                self.gc.logUpdate("You open "+front+".")
+                self.gc.currentLevel[y1][x1]=1
         else:
-            self.gc.logUpdate("You see "+front+", and behind that you see "+back+".")
+            front=lookIndex[front]
+            back=""
+            if self.gc.currentLevel[y1][x1]!=0:
+                x2=x1+self.moveW[self.facingIndex][0]
+                y2=y1+self.moveW[self.facingIndex][1]
+                back=self.gc.currentLevel[y2][x2]
+                back=lookIndex[back]
+
+            if len(back)<1:
+                self.gc.logUpdate("You see "+front+".")
+            else:
+                self.gc.logUpdate("You see "+front+", and behind that you see "+back+".")
+
+    def lookAt(self,pos):
+        posit=0
+        if pos[0]>self.x and pos[1]==self.y:
+            posit=1
+        if pos[0]<self.x and pos[1]==self.y:
+            posit=3
+        if pos[1]<self.y and self.x==pos[0]:
+            posit=0
+        if pos[1]>self.y and self.x==pos[0]:
+            posit=2
+        self.facingIndex=posit
+        self.facingDirection=self.facingDirections[self.facingIndex]
 
     def update(self):
         for event in self.gc.events:
-            #key presses
             if event.type == KEYDOWN:
-                #turning
-                if event.key == K_e or event.key == K_q:
-                    if event.key == K_e:
-                        self.actionMove("e")
-                    if event.key == K_q:
-                        self.actionMove("q")
-                #movement
-                if event.key in [K_w,K_s,K_a,K_d]:
-                    if event.key == K_w:
-                        self.actionMove("w")
-                    if event.key == K_s:
-                        self.actionMove("s")
-                    if event.key == K_a:
-                        self.actionMove("a")
-                    if event.key == K_d:
-                        self.actionMove("d")
+                if event.key in [K_w,K_s,K_a,K_d,K_e,K_q]:
+                    self.actionMove(key_directionIndex[event.key])

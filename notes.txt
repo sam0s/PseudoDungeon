@@ -1,0 +1,38 @@
+ATK = Player Skill Dmg.
+WDM = Weapon Dmg.
+
+CHANCE = ATK - ENEMY AC
+
+IF CHANCE
+	DMG = WDM - ENEMY DT
+
+
+
+player skills
+
+ATK - Chance to hit
+AGI - Chance to dodge / Turn amounts
+DEF - Improce AC
+MAG - Magic
+VIT - Health Points
+CRT - Chance to crit
+
+
+
+credit
+https://opengameart.org/content/gui-sound-effects
+https://opengameart.org/content/50-rpg-sound-effects
+https://opengameart.org/content/rpg-sound-pack
+https://opengameart.org/content/fleshy-fight-sounds
+
+
+Roll D300 against CRIT stat, if success Damage is doubled.
+
+Roll D100 against (ATK stat - enemy Armor Class), if success:
+	Roll D120 against enemy AGI stat, if success enemy will dodge the whole attack
+	Otherwise if the enemy doesn't dodge:
+		Damage dealt = Roll from 0 to Weapon's max damage.
+		Damage is doubled if a crit was determined earlier
+		Damage is reduced by enemy %DEF stat
+
+If damage is = 0, there is a 50% chance to deal 1 mercy point of damage to enemy.

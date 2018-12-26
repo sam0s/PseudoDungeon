@@ -1,0 +1,12 @@
+
+
+1=plainfloor
+2=bloodfloor
+
+
+3 - Chest
+
+
+
+4 - enemy (orc)
+5 - enemy (goblin)

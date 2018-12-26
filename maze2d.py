@@ -29,11 +29,11 @@ def main2():
     for row in maze:
         for col in row:
             #if col==-1:pygame.draw.rect(mazesurf,(0,255,0),(x*16,y*16,16,16),0)
-            if col==0:pygame.draw.rect(mazesurf,(0,0,0),(x*16,y*16,16,16),0)
-            if col==3:pygame.draw.rect(mazesurf,(100,100,250),(x*16,y*16,16,16),0)
-            if col==4:pygame.draw.rect(mazesurf,(255,100,250),(x*16,y*16,16,16),0)
+            #if col==0:pygame.draw.rect(mazesurf,(0,0,0),(x*16,y*16,16,16),0)
+            #if col==3:pygame.draw.rect(mazesurf,(100,100,250),(x*16,y*16,16,16),0)
+            #if col==4:pygame.draw.rect(mazesurf,(255,100,250),(x*16,y*16,16,16),0)
             if col==98:pygame.draw.rect(mazesurf,(0,255,255),(x*16,y*16,16,16),0)
-            if col==99:pygame.draw.rect(mazesurf,(200,0,0),(x*16,y*16,16,16),0)
+            #if col==99:pygame.draw.rect(mazesurf,(200,0,0),(x*16,y*16,16,16),0)
             x+=1
         x=0
         y+=1
@@ -50,7 +50,7 @@ def main2():
             if e.type == MOUSEBUTTONDOWN:
                 mse=pygame.mouse.get_pos()
                 mse16=(int((mse[0])/16)*16, int((mse[1])/16)*16)
-                print(int(mse16[0]/16),int(mse[1]/16))
+                #print(int(mse16[0]/16),int(mse[1]/16))
             if e.type == KEYDOWN:
                 main2()
             if e.type == QUIT:
