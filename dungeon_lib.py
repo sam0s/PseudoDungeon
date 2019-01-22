@@ -14,12 +14,13 @@ FONT=ui.LoadFont(24)
 floor=pygame.image.load(path.join("images","enviro","floor.png")).convert()
 wall=pygame.image.load(path.join("images","enviro","wall.png")).convert()
 chest=pygame.image.load(path.join("images","enviro","chest.png")).convert()
-enemy1=pygame.image.load(path.join("images","enemy","enemy3.png")).convert()
+enemy1=pygame.image.load(path.join("images","enemy","enemy1.png")).convert()
 floor_down=pygame.image.load(path.join("images","enviro","floor_down.png")).convert()
 floor_up=pygame.image.load(path.join("images","enviro","door.png")).convert()
 
 #hud iamges
 bordersImage=pygame.image.load(path.join("images","hud","borders.png")).convert()
+bordersCombat=pygame.image.load(path.join("images","hud","combat_borders.png")).convert()
 cursor=pygame.image.load(path.join("images","hud","cursor.png")).convert()
 
 button_images=[
@@ -36,6 +37,7 @@ for button in button_images:
     button.set_colorkey((255,0,255))
 
 bordersImage.set_colorkey((255,0,255))
+bordersCombat.set_colorkey((255,0,255))
 cursor.set_colorkey((255,0,255))
 wall.set_colorkey((255,0,255))
 floor_down.set_colorkey((255,0,255))
@@ -245,13 +247,42 @@ def drawHud(gcObj):
     #draw buttons
     drawButtons(gcObj)
 
-    bar(gcObj.screen,(0,200,20),-1,688,532,245,32,gcObj.p.hp,gcObj.p.maxhp)
-    #bar(gcObj.screen,(0,20,200),(0,0,0),688,568,245,32,gcObj.p.hp,gcObj.p.maxhp)
+
     #draw borders
+    bar(gcObj.screen,((0,200,20),-1),(688,532),(245,32),(gcObj.p.hp,gcObj.p.maxhp))
     gcObj.screen.blit(bordersImage,(0,0))
 
-def bar(surface,color1,color2,x,y,width,height,value,maxvalue):
+    #turns
+    x=688
+    for turn in range(gcObj.p.turns):
+        x+=18
+        pygame.draw.circle(gcObj.screen, (0,255,0), (x,590),8, 0)
+
+def drawCombat(gcObj):
+    #draw all of this during combat
+    gcObj.surf.fill((0,0,0))
+    drawHud(gcObj)
+    drawView((gcObj.p.x,gcObj.p.y),gcObj.currentLevel,gcObj.p.facingDirection,gcObj.surf)
+    small=pygame.transform.scale(gcObj.surf, (672,512))
+    gcObj.screen.blit(small,(0,0))
+
+    #enemy hp/turns
+    pygame.draw.rect(gcObj.screen,(0,0,0),(9,11,330-9,130-11),0)
+    bar(gcObj.screen,((0,200,20),-1),(32,32),(245,32),(gcObj.p.target.hp,gcObj.p.target.maxhp))
+    x=40
+    for turn in range(gcObj.p.target.turns):
+        x+=21
+        pygame.draw.circle(gcObj.screen, (255,0,0), (x,90),8, 0)
+
+    gcObj.screen.blit(bordersCombat,(0,0))
+
+    pygame.display.flip()
+
+def bar(surface,colors,pos,dimensions,values,altText=""):
     xx=0
+    value=values[0];maxvalue=values[1];width=dimensions[0];height=dimensions[1]
+    x=pos[0];y=pos[1]
+    color1=colors[0];color2=colors[1]
     if color2!=-1:
         pygame.draw.rect(surface, color2, (x,y,width,height), 0)
     for hp in range(int(max(min(value / float(maxvalue) * width, width), 0))):

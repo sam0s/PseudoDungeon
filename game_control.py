@@ -5,6 +5,7 @@ import random,math,mazeGen
 import dungeon_player as dp
 import ui,sound
 import enemy as el
+import escmenu as em
 import dungeon_lib as dl
 FONT=ui.LoadFont(24)
 
@@ -16,12 +17,8 @@ class gameControl:
         self.events=[]
         self.go=True
         self.drawn=0
-        self.log=["You awaken from a deep sleep."]
+        self.log=["You awaken from a deep sleep, and hombre you don't feel good about it."]
         self.controlToggle=False
-
-
-        self.dialog=[]
-        self.lastResult = "None"
 
         self.hudMoveButtons=[
         ui.Button(691,315,86,76,"TL",self.screen),
@@ -41,11 +38,15 @@ class gameControl:
         self.combat=False
         self.turn=0
 
+        self.escmenu = em.EscMenu(self.screen,self)
+        self.state = "menu"
+
         self.soundMixer = sound.Mix()
         #self.soundMixer.mscPlay("track1")
 
     def newMap(self):
-        self.currentLevel=mazeGen.generate(25)
+        #min 3, max 25
+        self.currentLevel=mazeGen.generate(10)
         self.currentView=[]
         for a in self.currentLevel:
             self.currentView.append([1,]*len(self.currentLevel[0])) #fog off
@@ -62,8 +63,9 @@ class gameControl:
                     self.p=dp.Player(eX,eY)
                     self.p.gc=self
                 if cell == 4:
+                    #add enemy-spawn logic
                     self.enemies.append(
-                    el.Enemy(eX,eY,4,self))
+                    el.Orc(eX,eY,4,self))
                 eX+=1
             eX=0
             eY+=1
@@ -90,9 +92,7 @@ class gameControl:
                     if b.text == "LK":
                         self.p.actionLook()
                     if b.text == "ATK":
-                        if self.p.turns>0:
-                            self.soundMixer.sndPlay("swing")
-                            self.p.actionAttack()
+                        self.p.actionAttack()
 
         else:
             for b in self.hudMoveButtons:
@@ -142,35 +142,34 @@ class gameControl:
         self.p.lookAt((enemy.x,enemy.y))
         self.p.target=enemy
         self.soundMixer.sndPlay("popup")
-        self.surf.fill((0,0,0))
-        small=pygame.transform.scale(self.surf, (672,512))
+
         self.p.turns=int(1+self.p.stats['agi']/10)
         enemy.turns=int(1+enemy.stats['agi']/10)
 
         while enemy.hp>1:
             self.event()
-
-            if self.drawn==0:
-                self.surf.fill((0,0,0))
-                dl.drawHud(self)
-                dl.drawView((self.p.x,self.p.y),self.currentLevel,self.p.facingDirection,self.surf)
-                small=pygame.transform.scale(self.surf, (672,512))
-                self.screen.blit(small,(0,0))
-                if not enemy.dead:dl.bar(self.screen,(0,200,20),-1,32,32,245,32,enemy.hp,enemy.maxhp)
-                pygame.display.flip()
-                self.drawn=1
-
             if not enemy.dead:
-                if enemy.turns<1:
-                    self.p.turns=int(1+self.p.stats['agi']/10)
-                    enemy.turns=int(1+enemy.stats['agi']/10)
 
-                if self.p.turns<1 and enemy.turns>0:
-                    print (enemy.hp)
-                    pygame.time.delay(200)
-                    enemy.myTurn()
+                if self.p.turns==0:
+                    self.drawn=0
+                    pygame.time.delay(400)
+                    enemy.turns=int(1+enemy.stats['agi']/10)
+                    self.p.turns=-1
+
+                if self.drawn==0:
+                    dl.drawCombat(self)
+                    self.drawn=1
+
+                if enemy.turns==0:
+                    pygame.time.delay(400)
+                    self.p.turns=int(1+self.p.stats['agi']/10)
+                    enemy.turns=-1
                     self.drawn=0
 
+                if self.p.turns<1 and enemy.turns>0:
+                    pygame.time.delay(400)
+                    enemy.myTurn()
+                    self.drawn=0
 
         self.drawn=0
         self.combat=False
@@ -178,19 +177,22 @@ class gameControl:
 
     def update(self):
         #Player Update
-        self.p.update()
         self.event()
-        if self.drawn==0:
-            #draw player view
-            self.surf.fill((0,0,0))
-            dl.drawHud(self)
-            dl.drawView((self.p.x,self.p.y),self.currentLevel,self.p.facingDirection,self.surf)
+        if self.state == "game":
+            self.p.update()
+            if self.drawn==0:
+                #draw player view
+                self.surf.fill((0,0,0))
+                dl.drawHud(self)
+                dl.drawView((self.p.x,self.p.y),self.currentLevel,self.p.facingDirection,self.surf)
 
-            #scale player view
-            small=pygame.transform.scale(self.surf, (672,512))
+                #scale player view
+                small=pygame.transform.scale(self.surf, (672,512))
 
-            self.screen.blit(small,(0,0))
-            self.drawn=1
-            self.enemyUpdate()
+                self.screen.blit(small,(0,0))
+                self.drawn=1
+                self.enemyUpdate()
 
-            pygame.display.flip()
+                pygame.display.flip()
+        else:
+            self.escmenu.Draw()

@@ -4,12 +4,12 @@ from pygame.locals import *
 
 def distance(p0, p1):
     return math.sqrt((p0[0] - p1[0])**2 + (p0[1] - p1[1])**2)
-#handle hud and other control
-class Enemy(object):
+
+class Enemy:
     def __init__(self,x,y,et,gc):
         self.gc=gc
         self.x,self.y,self.et=x,y,et
-        self.stats={'atk':25,'agi':10,'def':10,'mag':0,'vit':25,'crt':25}
+        self.stats={'atk':22,'agi':25,'def':20,'mag':25,'vit':10,'crt':25}
         self.maxhp=int(3+(self.stats["vit"]*0.6))
         self.hp=self.maxhp
         self.combat = False
@@ -31,20 +31,30 @@ class Enemy(object):
             if distance((self.x,self.y),(self.gc.p.x,self.gc.p.y))==1:
                 self.gc.doCombat(self)
         else:
-            print("enemy turn")
+            self.gc.drawn=0
             self.gc.p.takeHit(dl.damageCalc(self,self.gc.p))
             self.turns-=1
     def takeHit(self,hit):
-        self.hp-=hit
-        if hit>=1:
-            self.gc.soundMixer.sndPlay("hit1")
-            animator = dl.animation("slash")
-            while not animator.done:
-                animator.play(self.gc.screen)
-        if self.hp<=1:
-            self.gc.enemies.pop(self.gc.enemies.index(self))
-            self.gc.currentLevel[self.y][self.x]=1
-            self.dead=True
-
+        if not self.dead:
+            self.hp-=hit
+            if hit>=1:
+                self.gc.soundMixer.sndPlay("hit1")
+                animator = dl.animation("slash")
+                while not animator.done:
+                    animator.play(self.gc.screen)
+            if self.hp<=1:
+                self.gc.enemies.pop(self.gc.enemies.index(self))
+                self.gc.currentLevel[self.y][self.x]=1
+                self.dead=True
     def update(self):
         self.myTurn()
+
+class Orc(Enemy):
+    def __init__(self,x,y,level,gc):
+        Enemy.__init__(self,x,y,level,gc)
+        self.name = "Orc"
+
+class Goblin(Enemy):
+    def __init__(self,x,y,level,gc):
+        Enemy.__init__(self,x,y,level,gc)
+        self.name = "Goblin"

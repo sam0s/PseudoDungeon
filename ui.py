@@ -15,15 +15,15 @@ from os import path
 
 pygame.init()
 
-def LoadFont(size=11):
+def LoadFont(size=11,useF="old"):
     fontpath=path.split(path.realpath("ui.py"))
-    fontpath=path.join(fontpath[0],"old.ttf")
+    fontpath=path.join(fontpath[0],useF+".ttf")
     #print (fontpath)
     fonst=pygame.font.Font(fontpath,size)
     return fonst
 
 uiF=LoadFont(43)
-uiB=LoadFont(26)
+uiB=LoadFont(28,"uif")
 
 class UiObj(pygame.sprite.Sprite):
     def __init__(self,text,rect,surf):
@@ -33,7 +33,7 @@ class UiObj(pygame.sprite.Sprite):
         self.surf=surf
 
 class Button(UiObj):
-    def __init__(self,x,y,sizex,sizey,text,surf,visible=False):
+    def __init__(self,x,y,sizex,sizey,text,surf,visible=True):
         UiObj.__init__(self,text,Rect(x,y,sizex,sizey),surf)
         self.image=pygame.Surface((sizex,sizey))
         self.image.fill((255,0,0))
@@ -42,7 +42,7 @@ class Button(UiObj):
     def Update(self):
         if self.visible:
             self.surf.blit(self.image,(self.rect.x,self.rect.y))
-            self.surf.blit(self.textimg,((self.rect.x+(self.rect.right-self.rect.left)/2) - self.textimg.get_width()/2, (self.rect.y+(self.rect.bottom-self.rect.top)/2) - self.textimg.get_height()/2))
+            self.surf.blit(self.textimg,(int(self.rect.x+(self.rect.right-self.rect.left)/2) - int(self.textimg.get_width()/2),int(self.rect.y+(self.rect.bottom-self.rect.top)/2) - int(self.textimg.get_height()/2)))
 
 class dialog(UiObj):
     def __init__(self,x,y,text,surf,dtype):
@@ -91,4 +91,4 @@ class CheckBox(UiObj):
         a=(self.rect.x+(self.rect.right-self.rect.left)/2) - self.textimg.get_width()/2
         self.surf.blit(self.textimg,(a,self.rect.y+self.size+6))
         if self.active:
-            pygame.draw.circle(self.surf,(0,0,255),(self.rect.x+self.size/2,self.rect.y+self.size/2),8,0)
+            pygame.draw.circle(self.surf,(0,0,255),(self.rect.x+self.size//2,self.rect.y+self.size//2),8,0)

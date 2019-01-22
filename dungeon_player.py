@@ -6,27 +6,30 @@ from pygame.locals import *
 lookIndex={3:"a chest",0:"a wall",1:"nothing",4:"a lowly goblin",98:"a way up",99:"a way down"}
 weaponIndex={0:"dagger"}
 key_directionIndex = {K_w:"w",K_s:"s",K_a:"a",K_d:"d",K_e:"e",K_q:"q",}
-
+FACING_DIRECTIONS = ['n','e','s','w']
 class Player:
     def __init__(self,x,y):
         self.x=x
         self.y=y
 
         self.gc=None
-        self.stats={'atk':65,'agi':25,'def':80,'mag':25,'vit':20,'crt':25}
+        self.stats={'atk':25,'agi':25,'def':25,'mag':25,'vit':20,'crt':25}
         self.maxhp=int(10+(self.stats["vit"]*0.6))
         self.name="Craig"
         self.hp=int(self.maxhp)
         self.weapon=0
 
+        self.xp=0
+        self.nextxp=100
+        self.skillpoints=32
+        self.level=1
+
         self.facingIndex=0
-        self.facingDirections=['n','e','s','w']
-        self.facingDirection=self.facingDirections[self.facingIndex]
+        self.facingDirection=FACING_DIRECTIONS[self.facingIndex]
         self.moveW=[(0,-1),(1,0),(0,1),(-1,0)]
         self.moveS=[(0,1),(-1,0),(0,-1),(1,0)]
         self.moveA=[(-1,0),(0,-1),(1,0),(0,1)]
         self.moveD=[(1,0),(0,1),(-1,0),(0,-1)]
-        self.combat=False
         self.turns=1
 
     def takeHit(self,hit):
@@ -68,14 +71,17 @@ class Player:
 
             if self.facingIndex>3:self.facingIndex=0
             if self.facingIndex<0:self.facingIndex=3
-            self.facingDirection=self.facingDirections[self.facingIndex]
+            self.facingDirection=FACING_DIRECTIONS[self.facingIndex]
 
     def actionAttack(self):
         if self.gc.combat:
-            self.target.takeHit(dl.damageCalc(self,self.target))
-            self.turns-=1
-        self.gc.drawn=0
-        pygame.time.delay(200)
+            if self.turns>0:
+                self.turns-=1
+                self.gc.soundMixer.sndPlay("swing")
+                self.target.takeHit(dl.damageCalc(self,self.target))
+                self.gc.drawn=0
+                if self.turns!=0:pygame.time.delay(200)
+
 
     def actionLook(self):
         x1=self.x+self.moveW[self.facingIndex][0]
@@ -113,7 +119,7 @@ class Player:
         if pos[1]>self.y and self.x==pos[0]:
             posit=2
         self.facingIndex=posit
-        self.facingDirection=self.facingDirections[self.facingIndex]
+        self.facingDirection=FACING_DIRECTIONS[self.facingIndex]
 
     def update(self):
         for event in self.gc.events:
