@@ -18,6 +18,7 @@ import items
 
 pygame.init()
 font = ui.LoadFont(32,'uif')
+fontItems = ui.LoadFont(19,'uif')
 
 
 itemFrame=pygame.image.load(path.join("images","items.png")).convert()
@@ -30,7 +31,7 @@ class EscMenu(object):
         self.surf=surf
         self.world=world
         self.small = pygame.sprite.Group()
-        self.tab="map"
+        self.tab="items"
         self.created=0
 
         #BUTTONS INIT
@@ -55,14 +56,11 @@ class EscMenu(object):
 
         self.drawn=0
 
-        #self.buttons=[ui.Button(300,300,100,32,"Go Back.",self.surf)]
-        #self.CreateSmallMap(str(self.levelname+"\\world"+str(self.world.pos[0])+str(self.world.pos[1])+".txt"),self.small)
-
     def Draw(self):
         #press ESC to exit menu
         if self.drawn==0:
             if self.tab=="items":
-
+                self.surf.fill((0,0,0))
                 oef=230+(self.invy*42)
                 oef2=43+(self.invx*38)
                 #draw selected item, look at "USE" code
@@ -80,15 +78,18 @@ class EscMenu(object):
                     pass
                     ##print "no item selected";item=None
 
-
                 x=30
                 y=229
                 for f in self.world.p.activeWeapon:
                     self.surf.blit(f.image,(30,16))
                 for f in self.world.p.inventory:
                     #pygame.draw.rect(self.surf,(255,0,0),(x,y,26,26),0)
-                    self.surf.blit(f.image,(x,y))
-                    self.surf.blit(font.render(str(f.stack),0,(255,255,255),(0,0,0)),(x,y))
+                    toDraw=f.image
+                    if isinstance(f,items.Weapon):
+                        toDraw=pygame.transform.scale(f.image,(26,26))
+                    self.surf.blit(toDraw,(x,y))
+
+                    self.surf.blit(fontItems.render(str(f.stack),0,(255,255,255),(0,0,0)),(x,y))
                     x+=38
                     if x>470:
                         x=30
@@ -147,37 +148,37 @@ class EscMenu(object):
                     for b in self.invbuttons:
                         if b.rect.collidepoint(mse):
                             self.drawn=0
-                            try:item=self.world.player.inventory[(self.invx+(self.invy)*12)]
+                            try:item=self.world.p.inventory[(self.invx+(self.invy)*12)]
                             except IndexError:
                                 pass
                                 ##print "no item selected";item=None
                             if item:
                                 if b.text=="Use":
                                     if isinstance(item, items.Food):
-                                        self.world.player.hp+=item.consumeVal
-                                        if self.world.player.hp>self.world.player.maxhp:self.world.player.hp=self.world.player.maxhp
+                                        self.world.p.hp+=item.consumeVal
+                                        if self.world.p.hp>self.world.p.maxhp:self.world.p.hp=self.world.p.maxhp
                                         if item.stack==1:
-                                            self.world.player.inventory.pop((self.invx+(self.invy)*12))
+                                            self.world.p.inventory.pop((self.invx+(self.invy)*12))
                                         else:
                                             item.stack-=1
                                     if isinstance(item, items.Weapon):
-                                        if item.name!=self.world.player.activeWeapon[0].name:
+                                        if item.name!=self.world.p.activeWeapon[0].name:
                                             if item.stack>1:
                                                 item.stack-=1
-                                                self.world.player.giveItem(self.world.player.activeWeapon[0])
-                                                self.world.player.activeWeapon=[item]
+                                                self.world.p.giveItem(self.world.player.activeWeapon[0])
+                                                self.world.p.activeWeapon=[item]
                                             else:
-                                                self.world.player.giveItem(self.world.player.activeWeapon[0])
-                                                self.world.player.activeWeapon=[item]
-                                                self.world.player.inventory.pop((self.invx+(self.invy)*12))
+                                                self.world.p.giveItem(self.world.player.activeWeapon[0])
+                                                self.world.p.activeWeapon=[item]
+                                                self.world.p.inventory.pop((self.invx+(self.invy)*12))
 
                                 if b.text=="Drop":
                                         ###print "dropped item"
                                         if item.stack>1:
                                             item.stack-=1
                                         else:
-                                            self.world.player.inventory.pop((self.invx+(self.invy)*12))
-                            self.world.Draw(False)
+                                            self.world.p.inventory.pop((self.invx+(self.invy)*12))
+                            #self.world.Draw(False)
 
 
                     #INVENTORY DOT
@@ -227,12 +228,8 @@ class EscMenu(object):
                 for b in self.tabs:
                     if b.rect.collidepoint(e.pos):
                         if b.text=="Go Back":
-                            self.world.ChangeState("game")
+                            self.world.changeState("game")
                             self.drawn=0
-
-                        #self.drawn=0
-                        if b.text=="Leave":
-                            self.world.state="game"
                         if b.text=="Player":
                             self.player_stats_drawn=0
                             self.tab="player"

@@ -1,5 +1,5 @@
 import dungeon_lib as dl
-import pygame
+import pygame,items
 import ui
 from pygame.locals import *
 
@@ -23,7 +23,9 @@ class Player:
         self.nextxp=100
         self.skillpoints=32
         self.level=1
-
+        items.loadItems("items.json")
+        self.inventory = [items.getItem("Bread"),items.getItem("Dirk"),items.getItem("Bread"),items.getItem("Bread"),items.getItem("Axe"),]
+        self.activeWeapon = [items.getItem("GoldSword")]
         self.facingIndex=0
         self.facingDirection=FACING_DIRECTIONS[self.facingIndex]
         self.moveW=[(0,-1),(1,0),(0,1),(-1,0)]
@@ -81,7 +83,6 @@ class Player:
                 self.target.takeHit(dl.damageCalc(self,self.target))
                 self.gc.drawn=0
                 if self.turns!=0:pygame.time.delay(200)
-
 
     def actionLook(self):
         x1=self.x+self.moveW[self.facingIndex][0]

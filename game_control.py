@@ -17,7 +17,7 @@ class gameControl:
         self.events=[]
         self.go=True
         self.drawn=0
-        self.log=["You awaken from a deep sleep, and hombre you don't feel good about it."]
+        self.log=["Welcome to the dungeon."]
         self.controlToggle=False
 
         self.hudMoveButtons=[
@@ -39,11 +39,16 @@ class gameControl:
         self.turn=0
 
         self.escmenu = em.EscMenu(self.screen,self)
-        self.state = "menu"
+        self.state = "game"
 
         self.soundMixer = sound.Mix()
         #self.soundMixer.mscPlay("track1")
-
+    def changeState(self,state):
+        self.drawn=0
+        self.state=state
+        if self.state=="menu":
+            self.escmenu.drawn=0
+        #make this
     def newMap(self):
         #min 3, max 25
         self.currentLevel=mazeGen.generate(10)
@@ -89,10 +94,13 @@ class gameControl:
         if not self.controlToggle:
             for b in self.hudButtons:
                 if b.rect.collidepoint(mpos):
+                    print(b.text)
                     if b.text == "LK":
                         self.p.actionLook()
                     if b.text == "ATK":
                         self.p.actionAttack()
+                    if b.text == "INV":
+                        self.changeState("menu")
 
         else:
             for b in self.hudMoveButtons:
@@ -187,7 +195,7 @@ class gameControl:
                 dl.drawView((self.p.x,self.p.y),self.currentLevel,self.p.facingDirection,self.surf)
 
                 #scale player view
-                small=pygame.transform.scale(self.surf, (672,512))
+                small=pygame.transform.scale(self.surf, (673,512))
 
                 self.screen.blit(small,(0,0))
                 self.drawn=1

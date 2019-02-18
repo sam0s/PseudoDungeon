@@ -122,9 +122,6 @@ def drawLog(gcObj):
 def drawButtons(gcObj):
     #draw either controls for movement or actions
 
-    #black-drop
-    pygame.draw.rect(gcObj.screen,(0,0,0),(685,270,300,400),0)
-
     if not gcObj.controlToggle:
         gcObj.screen.blit(button_images[5].subsurface(0,0,32,32),(685,270))
         gcObj.screen.blit(button_images[0],(715,295))#look
@@ -236,18 +233,13 @@ def drawView(pos,level,facing,surf,mini=False):
 
 def drawHud(gcObj):
     #controls
-
-    mmb=pygame.Surface((4,4))
-    mmb.fill((255,0,0))
-
+    pygame.draw.rect(gcObj.screen,(0,0,0),(678,0,282,720),0)
     #minimap
     drawMiniMap(gcObj)
     #draw log
     drawLog(gcObj)
     #draw buttons
     drawButtons(gcObj)
-
-
     #draw borders
     bar(gcObj.screen,((0,200,20),-1),(688,532),(245,32),(gcObj.p.hp,gcObj.p.maxhp))
     gcObj.screen.blit(bordersImage,(0,0))
@@ -307,7 +299,7 @@ def damageCalc(t1,t2):
         else:
             #dmg = weapon dmg range - enemy def
 
-            totalDmg+=random.randint(1,6)
+            totalDmg+=random.randint(t1.activeWeapon[0].min,t1.activeWeapon[0].max)
 
             totalDmg=totalDmg*crit
 

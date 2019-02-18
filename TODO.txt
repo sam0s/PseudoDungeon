@@ -1,0 +1,2 @@
+giveItem player method
+fix stacking in inventory

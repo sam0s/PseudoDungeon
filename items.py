@@ -86,24 +86,16 @@ class Item:
         self.val = value
         self.stack=1
 
-####### QUEST ITEMS ##########
-###########################
-
-class QuestItem(Item):
-    def __init__(self, id_, **item_info):
-        Item.__init__(self, id_, **item_info)
-        self.image = itemsheetQuest.subsurface(pygame.Rect(self.idx*26, 0, 26, 26))
-
 
 ############ WEAPONS #######################
 ##########################
 
 class Weapon(Item):
-    def __init__(self, id_, ad, ap, **item_info):
+    def __init__(self, id_, max, min, **item_info):
         Item.__init__(self, id_, **item_info)
-        self.ad = ad
-        self.ap = ap
-        self.image = itemsheetWeapon.subsurface(pygame.Rect(self.idx*26, 0, 26, 26))
+        self.max = max
+        self.min = min
+        self.image = itemsheetWeapon.subsurface(pygame.Rect(self.idx*32, 0, 32, 32))
 
 
 ## EAT ##
