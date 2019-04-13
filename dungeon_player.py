@@ -34,6 +34,18 @@ class Player:
         self.moveD=[(1,0),(0,1),(-1,0),(0,-1)]
         self.turns=1
 
+    def giveItem(self,item):
+        if len(self.inventory)==72:
+            pass
+        else:
+            y=0
+            for f in self.inventory:
+                if f.name==item.name:
+                    f.stack+=1
+                    y=1
+            if y==0:
+                self.inventory.append(item)
+
     def takeHit(self,hit):
         self.hp-=hit
         if hit>=1:

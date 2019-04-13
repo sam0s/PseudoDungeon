@@ -14,9 +14,14 @@ FONT=ui.LoadFont(24)
 floor=pygame.image.load(path.join("images","enviro","floor.png")).convert()
 wall=pygame.image.load(path.join("images","enviro","wall.png")).convert()
 chest=pygame.image.load(path.join("images","enviro","chest.png")).convert()
-enemy1=pygame.image.load(path.join("images","enemy","enemy1.png")).convert()
 floor_down=pygame.image.load(path.join("images","enviro","floor_down.png")).convert()
 floor_up=pygame.image.load(path.join("images","enviro","door.png")).convert()
+
+#enemies
+enemy1=pygame.image.load(path.join("images","enemy","enemy1.png")).convert()
+enemy2=pygame.image.load(path.join("images","enemy","enemy2.png")).convert()
+enemy3=pygame.image.load(path.join("images","enemy","enemy3.png")).convert()
+enemy4=pygame.image.load(path.join("images","enemy","enemy4.png")).convert()
 
 #hud iamges
 bordersImage=pygame.image.load(path.join("images","hud","borders.png")).convert()
@@ -43,6 +48,9 @@ wall.set_colorkey((255,0,255))
 floor_down.set_colorkey((255,0,255))
 floor_up.set_colorkey((255,0,255))
 enemy1.set_colorkey((255,0,255))
+enemy2.set_colorkey((255,0,255))
+enemy3.set_colorkey((255,0,255))
+enemy4.set_colorkey((255,0,255))
 chest.set_colorkey((255,0,255))
 
 northCone=[[-1,0],[1,0],[0,-1],[-1,-1],[-2,-1],[1,-1],[2,-1],[0,-2],[-1,-2],[-2,-2],[1,-2],[2,-2]
@@ -85,7 +93,7 @@ def drawMiniMap(gcObj):
             if gcObj.currentView[y][x-2]==1:
                 if cell == 0:c=(150,150,150)
                 if cell == 1:c=(25,25,25)
-                if cell == 4:c=(250,0,0)
+                if cell > 900:c=(250,0,0)
                 if cell == 3:c=(0,0,255)
                 if cell == 98:c=(0,255,255)
                 if cell == 99:c=(0,230,100)
@@ -135,15 +143,15 @@ def drawButtons(gcObj):
 
 def drawTile(tile,pos,side,surf,mini):
     if tile == 12:tile=1
-    if mini:
-        if tile == 1: c=(25,25,25)
-        if tile == 0: c=(150,150,150)
-        if tile == 4: c=(250,25,25)
-
 
     if tile == 1: tile = floor
     if tile == 0: tile = wall
-    if tile == 4: tile = enemy1
+
+    if tile == 901: tile = enemy1
+    if tile == 902: tile = enemy2
+    if tile == 903: tile = enemy3
+    if tile == 904: tile = enemy4
+
     if tile == 3: tile = chest
     if tile == 98: tile = floor_up
     if tile == 99: tile = floor_down
@@ -317,7 +325,6 @@ def damageCalc(t1,t2):
     else:
         t1.gc.logUpdate(t1.name+" strikes for "+str(totalDmg)+".")
         return totalDmg
-
 
 class animation(object):
     def __init__(self,anim):

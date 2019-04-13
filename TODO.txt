@@ -1,2 +1,2 @@
-giveItem player method
+giveItem player method CHECK
 fix stacking in inventory

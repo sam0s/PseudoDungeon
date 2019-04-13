@@ -4,50 +4,50 @@
 	 	"1":
 	 	 {
 	 	 	"name": "Bread",
-	 	 	"descr": ["Some tasty bread.","","Heals for - 20"],
+	 	 	"descr": ["Some tasty bread.","","Heals for - 3"],
 	 	 	"idx": 1,
 	 	 	"value": 5,
-	 	 	"consumeVal": 20
+	 	 	"consumeVal": 3
 	 	 },
 	 	"2":
 	 	 {
 	 	 	"name": "Apple",
-	 	 	"descr": ["A ripe red apple.","","Heals for - 15"],
+	 	 	"descr": ["A ripe red apple.","","Heals for - 3"],
 	 	 	"idx": 2,
 	 	 	"value": 2,
-	 	 	"consumeVal": 15
+	 	 	"consumeVal": 3
 	 	 },
 	 	"3":
 	 	 {
 	 	 	"name": "Goblin Meat",
-	 	 	"descr": ["Well cooked goblin meat.","","Heals for - 25"],
+	 	 	"descr": ["Well cooked goblin meat.","","Heals for - 5"],
 	 	 	"idx": 3,
 	 	 	"value": 2,
-	 	 	"consumeVal": 25
+	 	 	"consumeVal": 5
 	 	 },
 	 	"4":
 	 	 {
 	 	 	"name": "Cheese",
-	 	 	"descr": ["Some funny smelling cheese.","","Heals for - 10"],
+	 	 	"descr": ["Some funny smelling cheese.","","Heals for - 4"],
 	 	 	"idx": 4,
 	 	 	"value": 2,
-	 	 	"consumeVal": 10
+	 	 	"consumeVal": 4
 	 	 },
 	 	"5":
 	 	 {
 	 	 	"name": "Fish",
-	 	 	"descr": ["A fish, ready to be eaten.","","Heals for - 15"],
+	 	 	"descr": ["A fish, ready to be eaten.","","Heals for - 5"],
 	 	 	"idx": 5,
 	 	 	"value": 2,
-	 	 	"consumeVal": 15
+	 	 	"consumeVal": 5
 	 	 },
 	 	"6":
 	 	 {
 	 	 	"name": "Health Potion",
-	 	 	"descr": ["A minor potion of healing, brewed to perfection.","","Heals for - 50"],
+	 	 	"descr": ["A minor potion of healing, brewed to perfection.","","Heals for - 50% HP"],
 	 	 	"idx": 6,
 	 	 	"value": 2,
-	 	 	"consumeVal": 50
+	 	 	"consumeVal": -5
 	 	 }
 	 },
 

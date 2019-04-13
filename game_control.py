@@ -19,7 +19,6 @@ class gameControl:
         self.drawn=0
         self.log=["Welcome to the dungeon."]
         self.controlToggle=False
-
         self.hudMoveButtons=[
         ui.Button(691,315,86,76,"TL",self.screen),
         ui.Button(778,315,83,76,"UP",self.screen),
@@ -51,7 +50,7 @@ class gameControl:
         #make this
     def newMap(self):
         #min 3, max 25
-        self.currentLevel=mazeGen.generate(10)
+        self.currentLevel=mazeGen.generate(12)
         self.currentView=[]
         for a in self.currentLevel:
             self.currentView.append([1,]*len(self.currentLevel[0])) #fog off
@@ -69,12 +68,13 @@ class gameControl:
                     self.p.gc=self
                 if cell == 4:
                     #add enemy-spawn logic
+                    enemyChoice = random.choice([901,901,901,902,902,903,903,904])
                     self.enemies.append(
-                    el.Orc(eX,eY,4,self))
+                    el.Enemy(eX,eY,enemyChoice,self))
+                    self.currentLevel[eY][eX] = enemyChoice
                 eX+=1
             eX=0
             eY+=1
-
     def enemyUpdate(self):
         for enemy in self.enemies:
             enemy.update()

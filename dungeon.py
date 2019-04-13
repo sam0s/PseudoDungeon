@@ -2,6 +2,7 @@ import pygame
 from pygame import surface
 from pygame.locals import *
 
+
 screen=pygame.display.set_mode((960, 720),HWSURFACE | DOUBLEBUF)
 import game
 

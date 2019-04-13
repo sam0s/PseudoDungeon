@@ -1,0 +1,33 @@
+{
+	"Normal":
+	 {
+	 	"901":
+	 	 {
+	 	 	"name": "Goblin",
+	 	 	"descr": ["A lowly goblin."],
+	 	 	"idx": 901,
+	 	 	"stats": [30,25,20,1,15,25]
+	 	 },
+	 	"902":
+	 	 {
+			"name": "Hobgoblin",
+ 	 	 	"descr": ["A quick hobgoblin."],
+ 	 	 	"idx": 902,
+ 	 	 	"stats": [20,50,15,1,10,50]
+		},
+		"903":
+		 {
+			"name": "Kobold",
+			"descr": ["A scary kobold."],
+			"idx": 903,
+			"stats": [32,40,35,1,20,40]
+		},
+		"904":
+		 {
+			"name": "Elf",
+			"descr": ["an intimidating elf."],
+			"idx": 904,
+			"stats": [50,50,45,1,30,45]
+		}
+	 }
+}

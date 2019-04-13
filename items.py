@@ -4,7 +4,7 @@
 items.py
 
 """
-__author__ = "Sam Tubb (sam0s)"
+__author__ = "djkool"
 __copyright__ = "None"
 __credits__ = []
 
@@ -52,7 +52,6 @@ def getItem(name):
     ##print "Creating %s" % (name)
     return copy(_ItemsByName[name])
 
-
 def fromId(idn,parent=None,justname=False):
     global _ItemsById
     if isinstance(idn, int):
@@ -63,20 +62,6 @@ def fromId(idn,parent=None,justname=False):
     item = _ItemsById[idn]
     return item.name if justname else copy(item)
 
-
-def randomItem():
-    #incorporate levels
-    randomIDN=choice(([1]*12) #bread
-                   +([2]*15) #apple
-                   +([3]*14) #porkchop
-                   +([4]*13) #cheese
-                   +([5]*13) #fish
-                   +([6]*8) #hpot
-                   +([201]*4) #sword
-                   )
-    return fromId(randomIDN)
-
-
 class Item:
     def __init__(self, id_, name, descr, idx, value = 0):
         self.id = id_
@@ -85,7 +70,6 @@ class Item:
         self.idx = idx
         self.val = value
         self.stack=1
-
 
 ############ WEAPONS #######################
 ##########################

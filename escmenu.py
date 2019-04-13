@@ -37,8 +37,7 @@ class EscMenu(object):
         #BUTTONS INIT
         self.tabs=[ui.Button(650,50,100,32,"Player",self.surf),
                     ui.Button(650,100,100,32,"Items",self.surf),
-                    ui.Button(650,200,100,32,"Go Back",self.surf),
-                    ui.Button(650,300,100,32,"Leave",self.surf)]
+                    ui.Button(650,200,100,32,"Go Back",self.surf)]
 
         self.invbuttons=[ui.Button(500,430,100,32,"Drop",self.surf),
                             ui.Button(500,385,100,32,"Use",self.surf)]
@@ -165,10 +164,10 @@ class EscMenu(object):
                                         if item.name!=self.world.p.activeWeapon[0].name:
                                             if item.stack>1:
                                                 item.stack-=1
-                                                self.world.p.giveItem(self.world.player.activeWeapon[0])
+                                                self.world.p.giveItem(self.world.p.activeWeapon[0])
                                                 self.world.p.activeWeapon=[item]
                                             else:
-                                                self.world.p.giveItem(self.world.player.activeWeapon[0])
+                                                self.world.p.giveItem(self.world.p.activeWeapon[0])
                                                 self.world.p.activeWeapon=[item]
                                                 self.world.p.inventory.pop((self.invx+(self.invy)*12))
 
